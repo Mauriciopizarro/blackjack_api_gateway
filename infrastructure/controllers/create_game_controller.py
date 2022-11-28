@@ -1,5 +1,8 @@
 from logging.config import dictConfig
 import logging
+
+import requests
+
 from infrastructure.logging import LogConfig
 from fastapi import APIRouter, Depends
 from domain.user import User
@@ -12,14 +15,10 @@ logger = logging.getLogger("blackjack")
 
 @router.post("/create_game")
 async def create_game(current_user: User = Depends(authenticate_with_token)):
+    url = "http://game_management_service:5001/create_game"
+    response = requests.post(url=url, json={
+        'username': current_user.username,
+        'user_id': current_user.id
+    })
 
-    logger.warning("Please add an HTTP call to game_management_service")
-    #game = create_game_service.create_game(username=current_user.username, user_id=current_user.id)
-    #return {
-    #    "message": "Game created",
-    #    "id": game.id,
-    #    "admin": {
-    #        "name": current_user.username,
-    #        "id": current_user.id
-    #    }
-    #}
+    return response.json()
