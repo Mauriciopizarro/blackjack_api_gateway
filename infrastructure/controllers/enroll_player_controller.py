@@ -1,15 +1,12 @@
+import requests
 from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException, Depends
 from domain.user import User
 from infrastructure.authentication.fast_api_authentication import authenticate_with_token
-from logging.config import dictConfig
-import logging
-from infrastructure.logging import LogConfig
+from requests.exceptions import HTTPError
 
 
 router = APIRouter()
-dictConfig(LogConfig().dict())
-logger = logging.getLogger("blackjack")
 
 
 class EnrollPlayerResponse(BaseModel):
@@ -20,27 +17,15 @@ class EnrollPlayerResponse(BaseModel):
 
 @router.post("/enroll_player/{game_id}", response_model=EnrollPlayerResponse)
 async def enroll_player(game_id: str, current_user: User = Depends(authenticate_with_token)):
-
-    logger.warning("Please add an HTTP call to game_management_service")
-
-    """ 
     try:
-        player_id = enroll_player_service.enroll_player(current_user.username, current_user.id, game_id)
-        return EnrollPlayerResponse(
-            message="Player enrolled successfully",
-            name=str(current_user.username),
-            player_id=str(player_id)
-        )
-    except IncorrectGameID:
+        url = f"http://game_management_service:5001/enroll_player/{game_id}"
+        response = requests.post(url=url, json={
+            'username': current_user.username,
+            'user_id': current_user.id
+        })
+        response.raise_for_status()
+        return response.json()
+    except HTTPError as e:
         raise HTTPException(
-            status_code=404, detail='game_id not found',
+            status_code=response.status_code, detail=response.json().get('detail'),
         )
-    except CantEnrollPlayersStartedGame:
-        raise HTTPException(
-            status_code=400, detail='Can not enroll players in game started'
-        )
-    except AlreadyEnrolledPlayer:
-        raise HTTPException(
-            status_code=400, detail='Player already enrolled'
-        )
-        """
