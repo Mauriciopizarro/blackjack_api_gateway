@@ -1,33 +1,22 @@
-from logging.config import dictConfig
-import logging
-from infrastructure.logging import LogConfig
+import requests
+from requests import HTTPError
 from domain.user import User
 from fastapi import APIRouter, HTTPException, Depends
 from infrastructure.authentication.fast_api_authentication import authenticate_with_token
 
 router = APIRouter()
-dictConfig(LogConfig().dict())
-logger = logging.getLogger("blackjack")
 
 
 @router.post("/stand/{game_id}")
 async def stand_controller(game_id: str, current_user: User = Depends(authenticate_with_token)):
-    logger.warning("Please add an HTTP call to game_service")
-
-    """ 
     try:
-        stand_service.stand(current_user.id, game_id)
-    except IncorrectGameID:
+        url = f'http://game_service:5002/stand/{game_id}'
+        response = requests.post(url, json={
+            'user_id': current_user.id
+        })
+        response.raise_for_status()
+        return response.json()
+    except HTTPError as e:
         raise HTTPException(
-            status_code=404, detail='game_id not found',
+            status_code=response.status_code, detail=response.json().get('detail'),
         )
-    except GameFinishedError:
-        raise HTTPException(
-            status_code=400, detail='The game_id entered is finished',
-        )
-    except IncorrectPlayerTurn:
-        raise HTTPException(
-            status_code=400, detail='Is not a turn to player entered',
-        )
-    return {'message': "Player stand"}
-    """
