@@ -1,29 +1,18 @@
-from fastapi import APIRouter, HTTPException
-from logging.config import dictConfig
-import logging
-from infrastructure.logging import LogConfig
+from fastapi import APIRouter, HTTPException, Depends
+from requests.exceptions import HTTPError
+import requests
+
 
 router = APIRouter()
-dictConfig(LogConfig().dict())
-logger = logging.getLogger("blackjack")
 
 
 @router.post("/croupier_play/{game_id}")
 async def croupier_controller(game_id: str):
-
-    #try:
-    logger.warning("Please add an HTTP call to game_service")
-    #    croupier_service.croupier_play(game_id)
-    #except NotCroupierTurnError:
-    #    raise HTTPException(
-    #        status_code=400, detail='Is not the croupier turn',
-    #    )
-    #except IncorrectGameID:
-    #    raise HTTPException(
-    #        status_code=404, detail='game_id not found',
-    #    )
-    #except GameFinishedError:
-    #    raise HTTPException(
-    #        status_code=400, detail='The game_id entered is finished',
-    #    )
-    #return {'message': "Croupier is playing"}
+    try:
+        response = requests.post(f'http://game_service:5002/croupier_play/{game_id}')
+        response.raise_for_status()
+        return response.json()
+    except HTTPError as e:
+        raise HTTPException(
+            status_code=response.status_code, detail=response.json().get('detail'),
+        )

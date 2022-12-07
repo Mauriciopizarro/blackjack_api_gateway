@@ -1,14 +1,11 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+from requests import HTTPError
 from typing import List
-from logging.config import dictConfig
-import logging
-from infrastructure.logging import LogConfig
+import requests
 
 
 router = APIRouter()
-dictConfig(LogConfig().dict())
-logger = logging.getLogger("blackjack")
 
 
 class Player(BaseModel):
@@ -37,13 +34,11 @@ class StatusResponse(BaseModel):
 
 @router.get("/player_status/{game_id}", response_model=StatusResponse)
 async def get_status_controller(game_id: str):
-    logger.warning("Please add an HTTP call to game_service")
-    """ 
     try:
-        player_status_json = status_service.players_status(game_id)
-        return player_status_json
-    except IncorrectGameID:
+        response = requests.get(f'http://game_service:5002/player_status/{game_id}')
+        response.raise_for_status()
+        return response.json()
+    except HTTPError as e:
         raise HTTPException(
-            status_code=404, detail='game_id not found',
+            status_code=response.status_code, detail=response.json().get('detail'),
         )
-        """
