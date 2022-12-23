@@ -12,3 +12,6 @@ class UserRepository(ABC):
     def save_user(self, user: UserPlainPassword) -> UserPlainPassword:
         pass
 
+    @abstractmethod
+    def update_password(self, user: UserInDB):
+        pass
