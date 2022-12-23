@@ -4,3 +4,7 @@ class NotExistentUser(Exception):
 
 class UserExistent(Exception):
     pass
+
+
+class EmptyNewPassword(Exception):
+    pass

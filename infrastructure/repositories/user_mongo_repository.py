@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-
+from bson.objectid import ObjectId
 from domain.exceptions import UserExistent, NotExistentUser
 from domain.interfaces.user_repository import UserRepository
 from domain.user import UserInDB, UserPlainPassword
@@ -41,5 +41,6 @@ class UserMongoRepository(UserRepository):
         user_id = self.db.insert_one({"username": user.username, "hashed_password": hashed_password})
         return UserInDB(hashed_password=hashed_password, id=str(user_id.inserted_id), username=user.username)
 
-
-
+    def update_password(self, user: UserInDB):
+        user_dict = user.dict()
+        self.db.find_one_and_update({"_id": ObjectId(user.id)}, {"$set": user_dict})

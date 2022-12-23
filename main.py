@@ -10,7 +10,8 @@ from infrastructure.controllers import (
     enroll_player_controller,
     status_controller,
     croupier_controller,
-    history_controller
+    history_controller,
+    reset_password_controller
 )
 
 app = FastAPI()
@@ -25,3 +26,4 @@ app.include_router(login_controller.router)
 app.include_router(sign_up_controller.router)
 app.include_router(create_game_controller.router)
 app.include_router(history_controller.router)
+app.include_router(reset_password_controller.router)

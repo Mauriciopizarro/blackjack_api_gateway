@@ -13,4 +13,5 @@ injector = Injector()
 injector.wire(modules=["application.login_service",
                        "application.sign_up_service",
                        "application.token_service",
+                       "application.reset_password_service"
                        ])
