@@ -11,13 +11,14 @@ class SignUpService:
     def __init__(self, user_repository: UserRepository = Provide[Injector.user_repo]):
         self.user_repository = user_repository
 
-    def sign_up(self, username, plain_password):
-        user = UserPlainPassword(username=username, plain_password=plain_password)
+    def sign_up(self, username, plain_password, email):
+        user = UserPlainPassword(username=username, plain_password=plain_password, email=email)
         user_response = self.user_repository.save_user(user)
         token = TokenService.generate_token(user_response)
         return {
             "token": token,
             "username": user_response.username,
             "user_id": user_response.id,
+            "email": user_response.email
         }
 

@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, EmailStr
 from passlib.context import CryptContext
 
 
@@ -8,6 +8,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class User(BaseModel):
     username: str
+    email: EmailStr
     id: Optional[str]
 
 
@@ -26,7 +27,7 @@ class UserPlainPassword(User):
         return pwd_context.hash(self.plain_password)
 
     @validator("plain_password")
-    def validate_plain_password(cls, value):
+    def validate_plain_password(value):
         if not value:
             raise EmptyPasswordError()
         return value
