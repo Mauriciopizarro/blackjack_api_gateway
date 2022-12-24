@@ -38,9 +38,10 @@ class UserMongoRepository(UserRepository):
         if user_dict:
             raise UserExistent()
         hashed_password = user.get_hashed_password()
-        user_id = self.db.insert_one({"username": user.username, "hashed_password": hashed_password})
-        return UserInDB(hashed_password=hashed_password, id=str(user_id.inserted_id), username=user.username)
+        user_id = self.db.insert_one({"username": user.username, "email": user.email, "hashed_password": hashed_password})
+        return UserInDB(hashed_password=hashed_password, id=str(user_id.inserted_id), username=user.username, email=user.email)
 
     def update_password(self, user: UserInDB):
         user_dict = user.dict()
+        user_dict.pop("id")
         self.db.find_one_and_update({"_id": ObjectId(user.id)}, {"$set": user_dict})

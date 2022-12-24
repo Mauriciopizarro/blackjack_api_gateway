@@ -1,4 +1,6 @@
+import time
 from fastapi import FastAPI
+from infrastructure.event_managers.rabbit_publisher import RabbitConnection
 import infrastructure.injector # no remove this dependecy
 from infrastructure.controllers import (
     create_game_controller,
@@ -13,6 +15,9 @@ from infrastructure.controllers import (
     history_controller,
     reset_password_controller
 )
+
+time.sleep(20)
+RabbitConnection.init_connection()
 
 app = FastAPI()
 
