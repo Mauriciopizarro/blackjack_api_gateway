@@ -1,7 +1,7 @@
 import time
 from fastapi import FastAPI
-from infrastructure.event_managers.rabbit_publisher import RabbitConnection
 import infrastructure.injector # no remove this dependecy
+from infrastructure.event_managers.rabbit_conection import RabbitConnection
 from infrastructure.controllers import (
     create_game_controller,
     sign_up_controller,
@@ -17,7 +17,11 @@ from infrastructure.controllers import (
 )
 
 time.sleep(20)
-RabbitConnection.init_connection()
+
+queues = ["password_updated_send_email", "user_created_send_email"]
+channel = RabbitConnection.get_channel()
+RabbitConnection.declare_queues(channel, queues)
+
 
 app = FastAPI()
 
