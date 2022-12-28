@@ -37,7 +37,8 @@ class ResetPasswordService:
         self.user_repository.update_password(updated_user)
         message = {
             "email": user_db.email,
-            "subject": "Your password has been updated"
+            "subject": "Your password has been updated",
+            "username": user_db.username
         }
         self.publisher.send_message(message=message, topic="password_updated_send_email")
         logger.info("message sended to password_updated topic")
