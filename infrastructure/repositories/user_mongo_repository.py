@@ -33,6 +33,12 @@ class UserMongoRepository(UserRepository):
         user_dict["id"] = user_dict.pop('_id')
         return UserInDB(**user_dict)
 
+    def is_mail_in_use(self, email: str) -> bool:
+        user_dict = self.db.find_one({"email": email})
+        if user_dict:
+            return True
+        return False
+
     def save_user(self, user: UserPlainPassword):
         user_dict = self.db.find_one({"username": user.username})
         if user_dict:

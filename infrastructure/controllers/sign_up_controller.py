@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ValidationError
 from fastapi import HTTPException, APIRouter
-from domain.exceptions import UserExistent
+from domain.exceptions import UserExistent, EmailInUse
 from domain.user import EmptyPasswordError
 from application.sign_up_service import SignUpService
 
@@ -34,6 +34,11 @@ async def sign_up_controller(request: SignUpRequestData):
         raise HTTPException(
             status_code=400,
             detail="Username already in use, try another",
+        )
+    except EmailInUse:
+        raise HTTPException(
+            status_code=400,
+            detail="Email has already been taken. Try sign up, if you forgot your password, please reset them",
         )
     except ValidationError:
         raise HTTPException(

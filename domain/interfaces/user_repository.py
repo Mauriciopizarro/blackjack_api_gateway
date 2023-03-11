@@ -5,6 +5,10 @@ from domain.user import UserInDB, UserPlainPassword
 class UserRepository(ABC):
 
     @abstractmethod
+    def is_mail_in_use(self, email: str) -> bool:
+        pass
+
+    @abstractmethod
     def get_by_username(self, username: str) -> UserInDB:
         pass
 

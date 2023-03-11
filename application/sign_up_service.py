@@ -1,4 +1,5 @@
 from dependency_injector.wiring import Provide, inject
+from domain.exceptions import EmailInUse
 from domain.user import UserPlainPassword
 from infrastructure.injector import Injector
 from domain.interfaces.publisher import Publisher
@@ -17,6 +18,8 @@ class SignUpService:
         self.publisher = publisher
 
     def sign_up(self, username, plain_password, email):
+        if self.user_repository.is_mail_in_use(email):
+            raise EmailInUse()
         user = UserPlainPassword(username=username, plain_password=plain_password, email=email)
         user_response = self.user_repository.save_user(user)
         token = TokenService.generate_token(user_response)
@@ -33,4 +36,3 @@ class SignUpService:
         }
         self.publisher.send_message(message=message, topic="user_created_send_email")
         return acess_info
-
