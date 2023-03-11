@@ -7,10 +7,10 @@ from requests.exceptions import HTTPError
 router = APIRouter()
 
 
-@router.post("/start_game/{game_id}")
+@router.post("/game/start/{game_id}")
 def start_game(game_id: str, current_user: User = Depends(authenticate_with_token)):
     try:
-        url = f'http://game_management_service:5001/start_game/{game_id}'
+        url = f'http://game_management_service:5001/game/start/{game_id}'
         response = requests.post(url=url, json={
             'user_id': current_user.id
         })

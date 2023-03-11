@@ -15,10 +15,10 @@ class EnrollPlayerResponse(BaseModel):
     player_id: str
 
 
-@router.post("/enroll_player/{game_id}", response_model=EnrollPlayerResponse)
+@router.post("/game/enroll_player/{game_id}", response_model=EnrollPlayerResponse)
 async def enroll_player(game_id: str, current_user: User = Depends(authenticate_with_token)):
     try:
-        url = f"http://game_management_service:5001/enroll_player/{game_id}"
+        url = f"http://game_management_service:5001/game/enroll_player/{game_id}"
         response = requests.post(url=url, json={
             'username': current_user.username,
             'user_id': current_user.id

@@ -6,10 +6,10 @@ import requests
 router = APIRouter()
 
 
-@router.post("/croupier_play/{game_id}")
+@router.post("/game/croupier_play/{game_id}")
 async def croupier_controller(game_id: str):
     try:
-        response = requests.post(f'http://game_service:5002/croupier_play/{game_id}')
+        response = requests.post(f'http://game_service:5002/game/croupier_play/{game_id}')
         response.raise_for_status()
         return response.json()
     except HTTPError as e:

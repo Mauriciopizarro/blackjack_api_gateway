@@ -7,10 +7,10 @@ from infrastructure.authentication.fast_api_authentication import authenticate_w
 router = APIRouter()
 
 
-@router.post("/create_game")
+@router.post("/game/create")
 async def create_game(current_user: User = Depends(authenticate_with_token)):
     try:
-        url = "http://game_management_service:5001/create_game"
+        url = "http://game_management_service:5001/game/create"
         response = requests.post(url=url, json={
             'username': current_user.username,
             'user_id': current_user.id

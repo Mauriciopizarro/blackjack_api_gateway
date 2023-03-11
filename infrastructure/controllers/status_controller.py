@@ -32,10 +32,10 @@ class StatusResponse(BaseModel):
     status_game: str
 
 
-@router.get("/player_status/{game_id}", response_model=StatusResponse)
+@router.get("/game/status/{game_id}", response_model=StatusResponse)
 async def get_status_controller(game_id: str):
     try:
-        response = requests.get(f'http://game_service:5002/player_status/{game_id}')
+        response = requests.get(f'http://game_service:5002/game/status/{game_id}')
         response.raise_for_status()
         return response.json()
     except HTTPError as e:
