@@ -7,10 +7,10 @@ from infrastructure.authentication.fast_api_authentication import authenticate_w
 router = APIRouter()
 
 
-@router.post("/stand/{game_id}")
+@router.post("/game/stand/{game_id}")
 async def stand_controller(game_id: str, current_user: User = Depends(authenticate_with_token)):
     try:
-        url = f'http://game_service:5002/stand/{game_id}'
+        url = f'http://game_service:5002/game/stand/{game_id}'
         response = requests.post(url, json={
             'user_id': current_user.id
         })

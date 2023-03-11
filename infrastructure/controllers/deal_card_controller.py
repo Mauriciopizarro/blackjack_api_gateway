@@ -8,11 +8,11 @@ import requests
 router = APIRouter()
 
 
-@router.post("/deal_card/{game_id}")
+@router.post("/game/deal_card/{game_id}")
 async def deal_card_controller(game_id: str, current_user: User = Depends(authenticate_with_token)):
 
     try:
-        url = f'http://game_service:5002/deal_card/{game_id}'
+        url = f'http://game_service:5002/game/deal_card/{game_id}'
         response = requests.post(url, json={
             'user_id': current_user.id
         })

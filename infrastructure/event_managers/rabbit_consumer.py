@@ -1,4 +1,3 @@
-import pika
 import logging
 from abc import abstractmethod
 from logging.config import dictConfig

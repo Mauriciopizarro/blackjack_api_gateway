@@ -5,15 +5,18 @@ FROM python:3.10
 WORKDIR /app
 
 #
-COPY ./requirements.txt /app/requirements.txt
+COPY ./requirementsconsumer.txt /app/requirements.txt
 
 #
 RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
 #
-COPY . /app
+COPY ./infrastructure/event_managers /app/infrastructure/event_managers
+COPY ./infrastructure/notify_managers /app/infrastructure/notify_managers
+COPY ./infrastructure/logging.py /app/infrastructure/logging.py
+COPY ./domain/interfaces /app/domain/interfaces
+COPY ./consumer.py /app/consumer.py
+COPY ./Dockerfile.consumer /app/Dockerfile.consumer
 
 #
-#RUN chmod +x /app/entrypoint.sh
 CMD ["python", "consumer.py"]
-#CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", $PORT]
