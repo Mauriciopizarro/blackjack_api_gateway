@@ -14,7 +14,7 @@ class RabbitConnection:
 
     def __init__(self):
         self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host="rabbitmq", heartbeat=999, blocked_connection_timeout=300)
+            pika.ConnectionParameters(host="rabbitmq", heartbeat=9999, blocked_connection_timeout=300)
         )
         self.channel = self.connection.channel()
         logger.warning('Rabbit connection initialized')
