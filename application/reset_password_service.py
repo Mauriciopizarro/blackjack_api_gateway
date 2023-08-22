@@ -41,4 +41,4 @@ class ResetPasswordService:
             "username": user_db.username
         }
         self.publisher.send_message(message=message, topic="password_updated_send_email")
-        logger.info("message sended to password_updated topic")
+        logger.info("message sent to password_updated topic")
