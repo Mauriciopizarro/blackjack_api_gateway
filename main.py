@@ -1,5 +1,6 @@
 import time
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import infrastructure.injector # no remove this dependecy
 from infrastructure.event_managers.rabbit_conection import RabbitConnection
 from infrastructure.controllers import (
@@ -36,3 +37,11 @@ app.include_router(sign_up_controller.router)
 app.include_router(create_game_controller.router)
 app.include_router(history_controller.router)
 app.include_router(reset_password_controller.router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
