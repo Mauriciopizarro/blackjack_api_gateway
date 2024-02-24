@@ -7,6 +7,7 @@ import sqlalchemy as db
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, select
 from sqlalchemy.sql.sqltypes import Integer, String
+from config import settings
 
 Base = declarative_base()
 
@@ -27,7 +28,7 @@ class UserSqlRepository(UserRepository):
 
     @staticmethod
     def get_database():
-        engine = db.create_engine('mysql+pymysql://user:password@mysql/blackjack')
+        engine = db.create_engine(settings.DATABASE_MYSQL_URL)
         Base.metadata.create_all(engine)
         return engine
 

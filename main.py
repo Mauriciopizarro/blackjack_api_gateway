@@ -14,7 +14,8 @@ from infrastructure.controllers import (
     status_controller,
     croupier_controller,
     history_controller,
-    reset_password_controller
+    reset_password_controller,
+    place_bet_controller
 )
 
 time.sleep(20)
@@ -37,6 +38,7 @@ app.include_router(sign_up_controller.router)
 app.include_router(create_game_controller.router)
 app.include_router(history_controller.router)
 app.include_router(reset_password_controller.router)
+app.include_router(place_bet_controller.router)
 
 app.add_middleware(
     CORSMiddleware,
