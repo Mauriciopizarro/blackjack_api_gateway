@@ -10,7 +10,8 @@ logger = logging.getLogger("blackjack")
 
 
 class UserCreatedSendEmailListener(RabbitConsumer):
-    topic = "user_created_send_email"
+    #topic = "user_created_send_email"
+    topic = "send-sign-up-email"
 
     def process_message(self, channel, method, properties, body):
         logger.info('Received message')

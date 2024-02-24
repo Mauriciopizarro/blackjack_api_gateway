@@ -3,6 +3,7 @@ from bson.objectid import ObjectId
 from domain.exceptions import UserExistent, NotExistentUser
 from domain.interfaces.user_repository import UserRepository
 from domain.user import UserInDB, UserPlainPassword
+from config import settings
 
 
 class UserMongoRepository(UserRepository):
@@ -22,7 +23,7 @@ class UserMongoRepository(UserRepository):
 
     @staticmethod
     def get_database():
-        client = MongoClient("mongodb://mongo:27017/blackjack")
+        client = MongoClient(settings.DATABASE_MONGO_URL)
         return client['api_gateway']["users"]
 
     def get_by_username(self, username):

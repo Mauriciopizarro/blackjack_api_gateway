@@ -2,7 +2,8 @@ import pika
 from logging.config import dictConfig
 import logging
 from infrastructure.logging import LogConfig
-
+from urllib.parse import urlparse
+from config import settings
 
 dictConfig(LogConfig().dict())
 logger = logging.getLogger("blackjack")
@@ -13,8 +14,13 @@ class RabbitConnection:
     instance = None
 
     def __init__(self):
+        credentials = pika.PlainCredentials(settings.RABBIT_USERNAME, settings.RABBIT_PASSWORD)
         self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host="rabbitmq", heartbeat=9999, blocked_connection_timeout=300)
+            pika.ConnectionParameters(host=settings.RABBIT_HOST,
+                                      heartbeat=9999,
+                                      blocked_connection_timeout=300,
+                                      credentials=credentials,
+                                      virtual_host=settings.RABBIT_VHOST)
         )
         self.channel = self.connection.channel()
         logger.warning('Rabbit connection initialized')

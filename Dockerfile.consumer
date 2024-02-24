@@ -16,6 +16,8 @@ COPY ./infrastructure/notify_managers /app/infrastructure/notify_managers
 COPY ./infrastructure/logging.py /app/infrastructure/logging.py
 COPY ./domain/interfaces /app/domain/interfaces
 COPY ./consumer.py /app/consumer.py
+COPY ./config.py /app/config.py
+COPY ./.env /app/.env
 COPY ./Dockerfile.consumer /app/Dockerfile.consumer
 
 #

@@ -1,28 +1,23 @@
 from dependency_injector.wiring import Provide, inject
-
 from domain.interfaces.auth_provider import AuthProvider
 from domain.user import User, UserInDB
 from infrastructure.injector import Injector
 from datetime import datetime, timedelta
 from jose import jwt
 from domain.interfaces.user_repository import UserRepository
-
-SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 9999999
-
+from config import settings
 
 class TokenService:
 
     @staticmethod
     def generate_token(user: User):
-        expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        expires_delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         expire = datetime.utcnow() + expires_delta
         to_encode = {
             "exp": expire,
             "sub": user.username
         }
-        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+        encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
         return encoded_jwt
 
     @staticmethod
