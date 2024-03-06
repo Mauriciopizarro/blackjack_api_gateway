@@ -1,11 +1,11 @@
 import json
 import pika
 import uuid
+from domain.interfaces.publisher import Publisher
+from infrastructure.event_managers.rabbit_conection import RabbitConnection
 from logging.config import dictConfig
 import logging
-from domain.interfaces.publisher import Publisher
 from infrastructure.logging import LogConfig
-from infrastructure.event_managers.rabbit_conection import RabbitConnection
 
 dictConfig(LogConfig().dict())
 logger = logging.getLogger("blackjack")
@@ -25,4 +25,4 @@ class RabbitPublisher(Publisher):
             ),
             body=json.dumps(message)
         )
-        logger.info('Message published')
+        logger.info(f'Message published in topic {topic}')

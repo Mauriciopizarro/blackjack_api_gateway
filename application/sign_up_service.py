@@ -23,7 +23,7 @@ class SignUpService:
         user = UserPlainPassword(username=username, plain_password=plain_password, email=email)
         user_response = self.user_repository.save_user(user)
         token = TokenService.generate_token(user_response)
-        acess_info = {
+        access_info = {
             "token": token,
             "username": user_response.username,
             "user_id": user_response.id,
@@ -32,7 +32,7 @@ class SignUpService:
         message = {
             "username": user_response.username,
             "email": user_response.email,
-            "subject": "User has been successfully created "
+            "subject": "User has been successfully created"
         }
         self.publisher.send_message(message=message, topic="user_created_send_email")
-        return acess_info
+        return access_info

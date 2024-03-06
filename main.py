@@ -1,4 +1,3 @@
-import time
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import infrastructure.injector # no remove this dependecy
@@ -15,10 +14,8 @@ from infrastructure.controllers import (
     croupier_controller,
     history_controller,
     reset_password_controller,
-    place_bet_controller
+    make_bet_controller
 )
-
-time.sleep(20)
 
 queues = ["password_updated_send_email", "user_created_send_email"]
 channel = RabbitConnection.get_channel()
@@ -38,7 +35,7 @@ app.include_router(sign_up_controller.router)
 app.include_router(create_game_controller.router)
 app.include_router(history_controller.router)
 app.include_router(reset_password_controller.router)
-app.include_router(place_bet_controller.router)
+app.include_router(make_bet_controller.router)
 
 app.add_middleware(
     CORSMiddleware,

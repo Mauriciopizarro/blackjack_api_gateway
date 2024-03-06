@@ -4,11 +4,9 @@ from domain.user import UserInDB, UserPlainPassword
 from infrastructure.injector import Injector
 from domain.interfaces.publisher import Publisher
 from domain.interfaces.user_repository import UserRepository
-
-import logging
 from logging.config import dictConfig
+import logging
 from infrastructure.logging import LogConfig
-
 
 dictConfig(LogConfig().dict())
 logger = logging.getLogger("blackjack")
@@ -34,7 +32,7 @@ class ResetPasswordService:
         user = UserPlainPassword(username=user_db.username, id=user_db.id, plain_password=new_password, email=user_db.email)
         hash_password = user.get_hashed_password()
         updated_user = UserInDB(username=user_db.username, id=user_db.id, hashed_password=hash_password, email=user_db.email)
-        self.user_repository.update_password(updated_user)
+        self.user_repository.update_user(updated_user)
         message = {
             "email": user_db.email,
             "subject": "Your password has been updated",
