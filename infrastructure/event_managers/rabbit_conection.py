@@ -1,9 +1,8 @@
 import pika
+from config import settings
 from logging.config import dictConfig
 import logging
 from infrastructure.logging import LogConfig
-from urllib.parse import urlparse
-from config import settings
 
 dictConfig(LogConfig().dict())
 logger = logging.getLogger("blackjack")

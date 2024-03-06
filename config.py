@@ -1,5 +1,6 @@
 from pydantic import BaseSettings
 
+
 class Settings(BaseSettings):
     RABBIT_USERNAME: str
     RABBIT_PASSWORD: str
