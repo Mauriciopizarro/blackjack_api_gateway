@@ -29,10 +29,14 @@ class SignUpService:
             "user_id": user_response.id,
             "email": user_response.email
         }
-        message = {
+        send_email_user_created_message = {
             "username": user_response.username,
             "email": user_response.email,
             "subject": "User has been successfully created"
         }
-        self.publisher.send_message(message=message, topic="user_created_send_email")
+        create_wallet_message = {
+            "user_id": user_response.id
+        }
+        self.publisher.send_message(message=send_email_user_created_message, topic="user_created_send_email")
+        self.publisher.send_message(message=create_wallet_message, topic="create_new_wallet")
         return access_info
