@@ -17,7 +17,10 @@ from infrastructure.controllers import (
     make_bet_controller
 )
 
-queues = ["password_updated_send_email", "user_created_send_email"]
+queues = ["password_updated_send_email",
+          "user_created_send_email",
+          "create_new_wallet"
+          ]
 channel = RabbitConnection.get_channel()
 RabbitConnection.declare_queues(channel, queues)
 
