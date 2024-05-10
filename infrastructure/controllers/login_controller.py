@@ -16,14 +16,14 @@ class Token(BaseModel):
 
 
 class LoginRequestData(BaseModel):
-    username: str
+    username_or_email: str
     password: str
 
 
 @router.post("/login", response_model=Token)
 async def login_for_access_token(json_data: LoginRequestData):
     try:
-        user = login_service.authenticate_user(json_data.username, json_data.password)
+        user = login_service.authenticate_user(json_data.username_or_email, json_data.password)
     except NotExistentUser:
         raise HTTPException(
             status_code=404,
