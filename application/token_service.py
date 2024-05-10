@@ -7,6 +7,7 @@ from jose import jwt
 from domain.interfaces.user_repository import UserRepository
 from config import settings
 
+
 class TokenService:
 
     @staticmethod
@@ -22,7 +23,10 @@ class TokenService:
 
     @staticmethod
     @inject
-    def get_user_by_token(token: str, user_repository: UserRepository = Provide[Injector.user_repo], auth_provider: AuthProvider = Provide[Injector.auth_provider]) -> UserInDB:
+    def get_user_by_token(token: str,
+                          user_repository: UserRepository = Provide[Injector.user_repo],
+                          auth_provider: AuthProvider = Provide[Injector.auth_provider]
+                          ) -> UserInDB:
         user_data = auth_provider.get_user_data(token)
-        user = user_repository.get_by_username(username=user_data["username"])
+        user = user_repository.get_by_username(user_data["username"])
         return user

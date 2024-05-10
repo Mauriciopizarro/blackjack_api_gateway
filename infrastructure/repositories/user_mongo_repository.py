@@ -3,6 +3,7 @@ from bson.objectid import ObjectId
 from domain.exceptions import UserExistent, NotExistentUser
 from domain.interfaces.user_repository import UserRepository
 from domain.user import UserInDB, UserPlainPassword
+from pydantic import EmailStr
 from config import settings
 
 
@@ -26,10 +27,13 @@ class UserMongoRepository(UserRepository):
         client = MongoClient(settings.DATABASE_MONGO_URL)
         return client['api_gateway']["users"]
 
-    def get_by_username(self, username):
-        user_dict = self.db.find_one({"username": username})
+    def get_by_username(self, username_or_email):
+        user_dict = self.db.find_one({"username": username_or_email})
         if user_dict is None:
-            raise NotExistentUser()
+            if self.is_email(username_or_email):
+                user_dict = self.db.find_one({"email": username_or_email})
+            if user_dict is None:
+                raise NotExistentUser()
         user_dict.update({'_id': str(user_dict.get('_id'))})
         user_dict["id"] = user_dict.pop('_id')
         return UserInDB(**user_dict)
@@ -52,3 +56,11 @@ class UserMongoRepository(UserRepository):
         user_dict = user.dict()
         user_dict.pop("id")
         self.db.find_one_and_update({"_id": ObjectId(user.id)}, {"$set": user_dict})
+
+    @staticmethod
+    def is_email(username_or_email):
+        try:
+            EmailStr.validate(username_or_email)
+            return True
+        except ValueError:
+            return False
