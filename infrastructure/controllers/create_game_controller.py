@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError
 from domain.user import User
 from infrastructure.authentication.fast_api_authentication import authenticate_with_token
+from config import settings
 
 router = APIRouter()
 
@@ -10,7 +11,7 @@ router = APIRouter()
 @router.post("/game/create")
 async def create_game(current_user: User = Depends(authenticate_with_token)):
     try:
-        url = "http://game_management_service:5001/game/create"
+        url = f"{settings.GAME_MANAGEMENT_API_URL}/game/create"
         response = requests.post(url=url, json={
             'username': current_user.username,
             'user_id': current_user.id
