@@ -3,6 +3,7 @@ from requests import HTTPError
 from domain.user import User
 from fastapi import APIRouter, HTTPException, Depends
 from infrastructure.authentication.fast_api_authentication import authenticate_with_token
+from config import settings
 
 router = APIRouter()
 
@@ -10,7 +11,7 @@ router = APIRouter()
 @router.post("/game/stand/{game_id}")
 async def stand_controller(game_id: str, current_user: User = Depends(authenticate_with_token)):
     try:
-        url = f'http://game_service:5002/game/stand/{game_id}'
+        url = f'{settings.GAME_API_URL}/game/stand/{game_id}'
         response = requests.post(url, json={
             'user_id': current_user.id
         })

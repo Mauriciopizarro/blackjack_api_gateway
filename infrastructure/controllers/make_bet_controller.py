@@ -4,6 +4,7 @@ from requests.exceptions import HTTPError
 from domain.user import User
 import requests
 from pydantic import BaseModel
+from config import settings
 
 
 router = APIRouter()
@@ -16,7 +17,7 @@ class PlaceBetRequestData(BaseModel):
 @router.post("/game/make_bet/{game_id}")
 async def make_bet_controller(game_id: str, request: PlaceBetRequestData, current_user: User = Depends(authenticate_with_token)):
     try:
-        url = f'http://game_service:5002/game/make_bet/{game_id}'
+        url = f'{settings.GAME_API_URL}/game/make_bet/{game_id}'
         response = requests.post(url, json={
             'player_id': current_user.id,
             'bet_amount': request.bet_amount

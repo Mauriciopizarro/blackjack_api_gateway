@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from requests.exceptions import HTTPError
 from domain.user import User
 import requests
+from config import settings
 
 
 router = APIRouter()
@@ -12,7 +13,7 @@ router = APIRouter()
 async def deal_card_controller(game_id: str, current_user: User = Depends(authenticate_with_token)):
 
     try:
-        url = f'http://game_service:5002/game/deal_card/{game_id}'
+        url = f'{settings.GAME_API_URL}/game/deal_card/{game_id}'
         response = requests.post(url, json={
             'user_id': current_user.id
         })
