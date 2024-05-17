@@ -10,9 +10,10 @@ router = APIRouter()
 login_service = LoginService()
 
 
-class Token(BaseModel):
+class ResponseDataModel(BaseModel):
     access_token: str
     token_type: str
+    user_id: str
 
 
 class LoginRequestData(BaseModel):
@@ -20,7 +21,7 @@ class LoginRequestData(BaseModel):
     password: str
 
 
-@router.post("/login", response_model=Token)
+@router.post("/login", response_model=ResponseDataModel)
 async def login_for_access_token(json_data: LoginRequestData):
     try:
         user = login_service.authenticate_user(json_data.username_or_email, json_data.password)
