@@ -15,7 +15,8 @@ from infrastructure.controllers import (
     history_controller,
     reset_password_controller,
     make_bet_controller,
-    get_wallet_controller
+    get_wallet_controller,
+    lobby_controller
 )
 
 queues = ["password_updated_send_email",
@@ -41,6 +42,7 @@ app.include_router(history_controller.router)
 app.include_router(reset_password_controller.router)
 app.include_router(make_bet_controller.router)
 app.include_router(get_wallet_controller.router)
+app.include_router(lobby_controller.router)
 
 app.add_middleware(
     CORSMiddleware,
