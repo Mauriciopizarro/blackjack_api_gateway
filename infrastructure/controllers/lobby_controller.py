@@ -57,6 +57,10 @@ async def get_lobby_list_controller(user_id: str):
             # "start"), conservamos el estado del game_management.
             pass
         game['status'] = status
+        # Las partidas terminadas no corresponden al listado de "juegos
+        # activos": se descartan una vez conocido su estado real.
+        if status == 'finished':
+            continue
         enriched_games.append(game)
 
     return {"user_id": data.get('user_id'), "games": enriched_games}
