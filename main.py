@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import infrastructure.injector # no remove this dependecy
-from infrastructure.event_managers.rabbit_conection import RabbitConnection
 from infrastructure.controllers import (
     create_game_controller,
     sign_up_controller,
@@ -18,13 +17,6 @@ from infrastructure.controllers import (
     get_wallet_controller,
     lobby_controller
 )
-
-queues = ["password_updated_send_email",
-          "user_created_send_email",
-          "create_new_wallet"
-          ]
-channel = RabbitConnection.get_channel()
-RabbitConnection.declare_queues(channel, queues)
 
 
 app = FastAPI()
