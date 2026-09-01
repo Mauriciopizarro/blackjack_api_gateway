@@ -1,23 +1,16 @@
-import requests
-from requests import HTTPError
+from fastapi import APIRouter, Depends
 from domain.user import User
-from fastapi import APIRouter, HTTPException, Depends
 from infrastructure.authentication.fast_api_authentication import authenticate_with_token
 from config import settings
+from infrastructure.proxy import proxy_request
 
 router = APIRouter()
 
 
 @router.post("/game/stand/{game_id}")
 async def stand_controller(game_id: str, current_user: User = Depends(authenticate_with_token)):
-    try:
-        url = f'{settings.GAME_API_URL}/game/stand/{game_id}'
-        response = requests.post(url, json={
-            'user_id': current_user.id
-        })
-        response.raise_for_status()
-        return response.json()
-    except HTTPError as e:
-        raise HTTPException(
-            status_code=response.status_code, detail=response.json().get('detail'),
-        )
+    return proxy_request(
+        'POST', f'{settings.GAME_API_URL}/game/stand/{game_id}',
+        json={'user_id': current_user.id},
+    )
+

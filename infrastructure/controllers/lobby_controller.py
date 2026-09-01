@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException
-from requests import HTTPError
 import time
+
 import requests
+from fastapi import APIRouter
 from config import settings
+from infrastructure.proxy import proxy_request
 
 
 router = APIRouter()
@@ -14,15 +15,7 @@ GHOST_GAME_SECONDS = 30 * 60
 
 @router.get("/game/lobby/list/{user_id}")
 async def get_lobby_list_controller(user_id: str):
-    try:
-        response = requests.get(f'{settings.GAME_MANAGEMENT_API_URL}/game/lobby/list/{user_id}')
-        response.raise_for_status()
-    except HTTPError:
-        raise HTTPException(
-            status_code=response.status_code, detail=response.json().get('detail'),
-        )
-
-    data = response.json()
+    data = proxy_request('GET', f'{settings.GAME_MANAGEMENT_API_URL}/game/lobby/list/{user_id}')
     games = data.get('games', [])
     enriched_games = []
 
@@ -68,11 +61,4 @@ async def get_lobby_list_controller(user_id: str):
 
 @router.get("/game/lobby/{game_id}")
 async def get_lobby_controller(game_id: str):
-    try:
-        response = requests.get(f'{settings.GAME_MANAGEMENT_API_URL}/game/lobby/{game_id}')
-        response.raise_for_status()
-        return response.json()
-    except HTTPError as e:
-        raise HTTPException(
-            status_code=response.status_code, detail=response.json().get('detail'),
-        )
+    return proxy_request('GET', f'{settings.GAME_MANAGEMENT_API_URL}/game/lobby/{game_id}')
