@@ -2,20 +2,27 @@ from dependency_injector.wiring import Provide, inject
 from domain.exceptions import EmailInUse
 from domain.user import UserPlainPassword
 from infrastructure.injector import Injector
-from domain.interfaces.publisher import Publisher
+from infrastructure.http_clients.money_service_http_client import MoneyServiceHttpClient
 from domain.interfaces.user_repository import UserRepository
 from application.token_service import TokenService
+from logging.config import dictConfig
+import logging
+from infrastructure.logging import LogConfig
+
+dictConfig(LogConfig().dict())
+logger = logging.getLogger("blackjack")
 
 
 class SignUpService:
 
     @inject
     def __init__(
-            self, user_repository: UserRepository = Provide[Injector.user_repo],
-            publisher: Publisher = Provide[Injector.publisher]
+            self,
+            user_repository: UserRepository = Provide[Injector.user_repo],
+            money_service_http_client: MoneyServiceHttpClient = Provide[Injector.money_service_http_client]
     ):
         self.user_repository = user_repository
-        self.publisher = publisher
+        self.money_service_http_client = money_service_http_client
 
     def sign_up(self, username, plain_password, email):
         if self.user_repository.is_mail_in_use(email):
@@ -34,9 +41,6 @@ class SignUpService:
             "email": user_response.email,
             "subject": "User has been successfully created"
         }
-        create_wallet_message = {
-            "user_id": user_response.id
-        }
-        self.publisher.send_message(message=send_email_user_created_message, topic="user_created_send_email")
-        self.publisher.send_message(message=create_wallet_message, topic="create_new_wallet")
+        logger.info(f"User created email notification (no email service): {send_email_user_created_message}")
+        self.money_service_http_client.create_wallet(user_id=user_response.id)
         return access_info
