@@ -7,6 +7,7 @@ reiniciando) o un timeout no reviente el gateway con un
 JSONDecodeError sin manejar.
 """
 from typing import Any, Optional
+from urllib.parse import urlparse
 
 import requests
 from fastapi import HTTPException
@@ -51,7 +52,10 @@ def proxy_request(method: str, url: str, timeout: int = DEFAULT_TIMEOUT, **kwarg
         return data
 
     detail = data.get('detail') if isinstance(data, dict) else None
+    # Identificamos el servicio downstream en el mensaje: sin esto un
+    # 429/503 es indistinguible entre game/money/game_management.
+    downstream = urlparse(response.url).netloc
     raise HTTPException(
         status_code=response.status_code,
-        detail=detail or f'Downstream service returned status {response.status_code}',
+        detail=detail or f'Downstream service {downstream} returned status {response.status_code}',
     )

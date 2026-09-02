@@ -1,4 +1,5 @@
 import time
+from typing import Dict, Tuple
 
 import requests
 from fastapi import APIRouter
@@ -12,9 +13,23 @@ router = APIRouter()
 # (abandonada antes de que todos apostaran).
 GHOST_GAME_SECONDS = 30 * 60
 
+# El front dispara /game/lobby/list por varias vías a la vez (eventos socket
+# `newGame`/`gameUpdated` globales + focus/visibility en N pestañas). Cada
+# request = 1 llamada a game_management + N a game_service (enriquecimiento
+# de estado). Sin collapsar, la ráfaga multiplica las llamadas downstream y
+# el hosting free responde 429. Cache corto por user_id: 1 sola llamada real
+# cada 2 segundos.
+_LOBBY_LIST_TTL_SECONDS = 2
+_lobby_list_cache: Dict[str, Tuple[float, dict]] = {}
+
 
 @router.get("/game/lobby/list/{user_id}")
 async def get_lobby_list_controller(user_id: str):
+    now = time.time()
+    cached = _lobby_list_cache.get(user_id)
+    if cached is not None and (now - cached[0]) < _LOBBY_LIST_TTL_SECONDS:
+        return cached[1]
+
     data = proxy_request('GET', f'{settings.GAME_MANAGEMENT_API_URL}/game/lobby/list/{user_id}')
     games = data.get('games', [])
     enriched_games = []
@@ -61,7 +76,9 @@ async def get_lobby_list_controller(user_id: str):
             continue
         enriched_games.append(game)
 
-    return {"user_id": data.get('user_id'), "games": enriched_games}
+    result = {"user_id": data.get('user_id'), "games": enriched_games}
+    _lobby_list_cache[user_id] = (now, result)
+    return result
 
 
 @router.get("/game/lobby/{game_id}")
