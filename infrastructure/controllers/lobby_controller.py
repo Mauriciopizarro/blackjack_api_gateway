@@ -3,7 +3,7 @@ import time
 import requests
 from fastapi import APIRouter
 from config import settings
-from infrastructure.proxy import proxy_request
+from infrastructure.proxy import proxy_request, _parse_json
 
 
 router = APIRouter()
@@ -44,7 +44,12 @@ async def get_lobby_list_controller(user_id: str):
                 f'{settings.GAME_API_URL}/game/status/{game_id}', timeout=2
             )
             if game_status_response.ok:
-                status = game_status_response.json().get('status_game', status)
+                # Parseo defensivo: el game_service puede devolver basura no-JSON
+                # (Render 502/503, servicio dormido). Igual que el resto de los
+                # controllers, usamos _parse_json en vez de response.json().
+                game_status_data = _parse_json(game_status_response)
+                if isinstance(game_status_data, dict):
+                    status = game_status_data.get('status_game', status)
         except Exception:
             # Si el game_service aún no tiene la partida (aún no se dio
             # "start"), conservamos el estado del game_management.
